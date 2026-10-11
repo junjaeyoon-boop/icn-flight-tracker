@@ -3,12 +3,10 @@ import json
 import os
 from datetime import datetime, timedelta
 
-# GitHub Secrets에서 인증키를 불러옵니다
 SERVICE_KEY = os.environ.get("SERVICE_KEY")
-
-# 여객기 운항 현황 정보 조회 오퍼레이션 API 엔드포인트
 API_URL_DEPARTURE = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp"
 API_URL_ARRIVAL = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp/getPassengerArrivalsOdp"
+HISTORY_FILE = "history.json"
 
 def format_time(t_str):
     if t_str and len(t_str) == 4:
@@ -38,7 +36,7 @@ def calculate_delay_and_date(sch_time_str, est_time_str):
 
 def fetch_flights(api_url, direction, today_dt):
     if not SERVICE_KEY:
-        print("API 키가 없습니다. GitHub Secrets 설정을 확인하세요.")
+        print("API 키가 없습니다.")
         return []
         
     params = {
@@ -107,23 +105,58 @@ def fetch_flights(api_url, direction, today_dt):
                     processed_masters.add(check_id)
 
         return abnormal_flights
-
-    except Exception as e:
-        print(f"[{direction}] 에러: {e}")
+    except Exception:
         return []
 
+# --- 데이터 누적용 함수들 ---
+def load_history(today_date_str):
+    """오늘 날짜와 일치하는 누적 데이터를 불러옵니다. 날짜가 다르면 빈 리스트를 반환하여 리셋합니다."""
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if data.get("date") == today_date_str:
+                    return data.get("departures", []), data.get("arrivals", [])
+        except Exception:
+            pass
+    return [], []
+
+def save_history(today_date_str, deps, arrs):
+    """병합된 데이터를 JSON 파일로 저장합니다."""
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump({"date": today_date_str, "departures": deps, "arrivals": arrs}, f, ensure_ascii=False, indent=2)
+
+def merge_flights(history, current):
+    """과거 기록(history)에 최신 데이터(current)를 덮어쓰거나 추가하여 누적시킵니다."""
+    merged = {}
+    for f in history:
+        merged[f"{f['flight']}_{f['scheduled']}"] = f
+    for f in current:
+        merged[f"{f['flight']}_{f['scheduled']}"] = f
+    
+    # 예정시간(scheduled) 기준으로 오름차순 정렬하여 반환
+    return sorted(list(merged.values()), key=lambda x: x['scheduled'])
 
 if __name__ == "__main__":
-    # 한국 시간(KST) 세팅
     kst_now = datetime.utcnow() + timedelta(hours=9)
     today_str = kst_now.strftime("%Y년 %m월 %d일 %H:%M 기준")
-    
-    # 비고란 리셋을 위해 사용할 "오늘 날짜" 고유 키 (예: 20261011)
     date_key = kst_now.strftime("%Y%m%d")
     
-    departures = fetch_flights(API_URL_DEPARTURE, "출발편", kst_now)
-    arrivals = fetch_flights(API_URL_ARRIVAL, "도착편", kst_now)
+    # 1. 기존 누적 데이터 불러오기
+    hist_deps, hist_arrs = load_history(date_key)
+    
+    # 2. 현재 API 데이터 불러오기
+    current_deps = fetch_flights(API_URL_DEPARTURE, "출발편", kst_now)
+    current_arrs = fetch_flights(API_URL_ARRIVAL, "도착편", kst_now)
+    
+    # 3. 데이터 병합 (과거 + 현재)
+    final_deps = merge_flights(hist_deps, current_deps)
+    final_arrs = merge_flights(hist_arrs, current_arrs)
+    
+    # 4. 누적 파일(history.json) 갱신
+    save_history(date_key, final_deps, final_arrs)
 
+    # 5. HTML 파일 생성
     html = f"""
     <!DOCTYPE html>
     <html lang="ko">
@@ -142,17 +175,17 @@ if __name__ == "__main__":
         </style>
     </head>
     <body>
-        <h1>📅 인천국제공항 비정상 운항 보고서</h1>
+        <h1>📅 인천국제공항 당일 비정상 운항 누적 보고서</h1>
         <p style="color:gray;">업데이트 시간: {today_str}</p>
         
-        <h2>🛫 출발편 (총 {len(departures)}건)</h2>
+        <h2>🛫 출발편 (당일 누적 {len(final_deps)}건)</h2>
         <ul>
     """
     
-    if not departures:
-        html += "<li><div class='flight-info'>결항 또는 헤비 딜레이된 출발편이 없습니다.</div></li>"
+    if not final_deps:
+        html += "<li><div class='flight-info'>오늘 결항 또는 헤비 딜레이된 출발편이 없습니다.</div></li>"
     else:
-        for item in departures:
+        for item in final_deps:
             html += f"""
             <li>
                 <div class="flight-info">[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></div>
@@ -161,14 +194,14 @@ if __name__ == "__main__":
             
     html += f"""
         </ul>
-        <h2>🛬 도착편 (총 {len(arrivals)}건)</h2>
+        <h2>🛬 도착편 (당일 누적 {len(final_arrs)}건)</h2>
         <ul>
     """
     
-    if not arrivals:
-        html += "<li><div class='flight-info'>결항 또는 헤비 딜레이된 도착편이 없습니다.</div></li>"
+    if not final_arrs:
+        html += "<li><div class='flight-info'>오늘 결항 또는 헤비 딜레이된 도착편이 없습니다.</div></li>"
     else:
-        for item in arrivals:
+        for item in final_arrs:
             html += f"""
             <li>
                 <div class="flight-info">[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></div>
@@ -177,14 +210,13 @@ if __name__ == "__main__":
 
     html += f"""
         </ul>
-        <p style="color:gray; font-size:12px; margin-top:30px;">※ 이 데이터는 30분 주기로 자동 업데이트됩니다.</p>
+        <p style="color:gray; font-size:12px; margin-top:30px;">※ 이 데이터는 30분 주기로 자동 업데이트되며, 이미 도착/출발이 끝난 항공편도 자정 전까지 리스트에 계속 남습니다.</p>
         
         <script>
             document.addEventListener("DOMContentLoaded", function() {{
-                const todayKey = "{date_key}"; // 파이썬에서 주입된 오늘 날짜 (예: 20261011)
+                const todayKey = "{date_key}";
                 const inputs = document.querySelectorAll('.remark-input');
 
-                // 1. 과거 날짜의 비고란 데이터 자동 삭제 (찌꺼기 데이터 청소)
                 for (let i = 0; i < localStorage.length; i++) {{
                     let key = localStorage.key(i);
                     if (key && key.startsWith('remark_') && !key.includes(todayKey)) {{
@@ -192,17 +224,12 @@ if __name__ == "__main__":
                     }}
                 }}
 
-                // 2. 현재 화면의 입력칸에 저장된 데이터 불러오기 및 입력 시 자동 저장
                 inputs.forEach(input => {{
                     const flightId = input.getAttribute('data-flight');
                     const storageKey = `remark_${{todayKey}}_${{flightId}}`;
-
-                    // 저장된 내용이 있으면 불러오기
                     if (localStorage.getItem(storageKey)) {{
                         input.value = localStorage.getItem(storageKey);
                     }}
-
-                    // 글씨를 칠 때마다 즉시 로컬 스토리지에 저장
                     input.addEventListener('input', function() {{
                         localStorage.setItem(storageKey, this.value);
                     }});
