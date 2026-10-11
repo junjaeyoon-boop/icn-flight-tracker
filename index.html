@@ -7,24 +7,58 @@
         <title>인천공항 비정상 운항 현황</title>
         <style>
             body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
-            h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+            h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
             ul { list-style-type: none; padding: 0; }
-            li { padding: 8px; border-bottom: 1px solid #eee; }
+            li { padding: 12px 8px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
+            .flight-info { font-size: 16px; word-break: keep-all; }
+            .remark-input { width: 100%; max-width: 500px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background-color: #f9f9f9; }
+            .remark-input:focus { outline: none; border-color: #0066cc; background-color: #fff; }
         </style>
     </head>
     <body>
         <h1>📅 인천국제공항 비정상 운항 보고서</h1>
-        <p style="color:gray;">업데이트 시간: 2026년 10월 11일 16:58 기준</p>
+        <p style="color:gray;">업데이트 시간: 2026년 10월 11일 17:10 기준</p>
         
         <h2>🛫 출발편 (총 0건)</h2>
         <ul>
-    <li>결항 또는 헤비 딜레이된 출발편이 없습니다.</li>
+    <li><div class='flight-info'>결항 또는 헤비 딜레이된 출발편이 없습니다.</div></li>
         </ul>
-        <h2>🛬 도착편 (총 1건)</h2>
+        <h2>🛬 도착편 (총 0건)</h2>
         <ul>
-    <li>[EY822] [아부다비] [10:55] -> <strong>[14:27]</strong></li>
+    <li><div class='flight-info'>결항 또는 헤비 딜레이된 도착편이 없습니다.</div></li>
         </ul>
         <p style="color:gray; font-size:12px; margin-top:30px;">※ 이 데이터는 30분 주기로 자동 업데이트됩니다.</p>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const todayKey = "20261011"; // 파이썬에서 주입된 오늘 날짜 (예: 20261011)
+                const inputs = document.querySelectorAll('.remark-input');
+
+                // 1. 과거 날짜의 비고란 데이터 자동 삭제 (찌꺼기 데이터 청소)
+                for (let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i);
+                    if (key && key.startsWith('remark_') && !key.includes(todayKey)) {
+                        localStorage.removeItem(key);
+                    }
+                }
+
+                // 2. 현재 화면의 입력칸에 저장된 데이터 불러오기 및 입력 시 자동 저장
+                inputs.forEach(input => {
+                    const flightId = input.getAttribute('data-flight');
+                    const storageKey = `remark_${todayKey}_${flightId}`;
+
+                    // 저장된 내용이 있으면 불러오기
+                    if (localStorage.getItem(storageKey)) {
+                        input.value = localStorage.getItem(storageKey);
+                    }
+
+                    // 글씨를 칠 때마다 즉시 로컬 스토리지에 저장
+                    input.addEventListener('input', function() {
+                        localStorage.setItem(storageKey, this.value);
+                    });
+                });
+            });
+        </script>
     </body>
     </html>
     
