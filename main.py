@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime, timedelta
 
-# GitHub Secrets에서 인증키를 불러옵니다 (코드 노출 방지)
+# GitHub Secrets에서 인증키를 불러옵니다
 SERVICE_KEY = os.environ.get("SERVICE_KEY")
 
 # 여객기 운항 현황 정보 조회 오퍼레이션 API 엔드포인트
@@ -112,10 +112,14 @@ def fetch_flights(api_url, direction, today_dt):
         print(f"[{direction}] 에러: {e}")
         return []
 
+
 if __name__ == "__main__":
-    # GitHub 서버는 UTC 기준이므로 한국 시간(KST)으로 맞추기 위해 9시간을 더합니다.
+    # 한국 시간(KST) 세팅
     kst_now = datetime.utcnow() + timedelta(hours=9)
     today_str = kst_now.strftime("%Y년 %m월 %d일 %H:%M 기준")
+    
+    # 비고란 리셋을 위해 사용할 "오늘 날짜" 고유 키 (예: 20261011)
+    date_key = kst_now.strftime("%Y%m%d")
     
     departures = fetch_flights(API_URL_DEPARTURE, "출발편", kst_now)
     arrivals = fetch_flights(API_URL_ARRIVAL, "도착편", kst_now)
@@ -129,9 +133,12 @@ if __name__ == "__main__":
         <title>인천공항 비정상 운항 현황</title>
         <style>
             body {{ font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }}
-            h2 {{ color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; }}
+            h2 {{ color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 30px; }}
             ul {{ list-style-type: none; padding: 0; }}
-            li {{ padding: 8px; border-bottom: 1px solid #eee; }}
+            li {{ padding: 12px 8px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }}
+            .flight-info {{ font-size: 16px; word-break: keep-all; }}
+            .remark-input {{ width: 100%; max-width: 500px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background-color: #f9f9f9; }}
+            .remark-input:focus {{ outline: none; border-color: #0066cc; background-color: #fff; }}
         </style>
     </head>
     <body>
@@ -143,10 +150,14 @@ if __name__ == "__main__":
     """
     
     if not departures:
-        html += "<li>결항 또는 헤비 딜레이된 출발편이 없습니다.</li>"
+        html += "<li><div class='flight-info'>결항 또는 헤비 딜레이된 출발편이 없습니다.</div></li>"
     else:
         for item in departures:
-            html += f"<li>[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></li>"
+            html += f"""
+            <li>
+                <div class="flight-info">[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></div>
+                <input type="text" class="remark-input" data-flight="{item['flight']}" placeholder="여기에 비고를 입력하세요 (자동 임시저장)">
+            </li>"""
             
     html += f"""
         </ul>
@@ -155,14 +166,49 @@ if __name__ == "__main__":
     """
     
     if not arrivals:
-        html += "<li>결항 또는 헤비 딜레이된 도착편이 없습니다.</li>"
+        html += "<li><div class='flight-info'>결항 또는 헤비 딜레이된 도착편이 없습니다.</div></li>"
     else:
         for item in arrivals:
-            html += f"<li>[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></li>"
+            html += f"""
+            <li>
+                <div class="flight-info">[{item['flight']}] [{item['airport']}] [{item['scheduled']}] -> <strong>{item['estimated']}</strong></div>
+                <input type="text" class="remark-input" data-flight="{item['flight']}" placeholder="여기에 비고를 입력하세요 (자동 임시저장)">
+            </li>"""
 
-    html += """
+    html += f"""
         </ul>
         <p style="color:gray; font-size:12px; margin-top:30px;">※ 이 데이터는 30분 주기로 자동 업데이트됩니다.</p>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {{
+                const todayKey = "{date_key}"; // 파이썬에서 주입된 오늘 날짜 (예: 20261011)
+                const inputs = document.querySelectorAll('.remark-input');
+
+                // 1. 과거 날짜의 비고란 데이터 자동 삭제 (찌꺼기 데이터 청소)
+                for (let i = 0; i < localStorage.length; i++) {{
+                    let key = localStorage.key(i);
+                    if (key && key.startsWith('remark_') && !key.includes(todayKey)) {{
+                        localStorage.removeItem(key);
+                    }}
+                }}
+
+                // 2. 현재 화면의 입력칸에 저장된 데이터 불러오기 및 입력 시 자동 저장
+                inputs.forEach(input => {{
+                    const flightId = input.getAttribute('data-flight');
+                    const storageKey = `remark_${{todayKey}}_${{flightId}}`;
+
+                    // 저장된 내용이 있으면 불러오기
+                    if (localStorage.getItem(storageKey)) {{
+                        input.value = localStorage.getItem(storageKey);
+                    }}
+
+                    // 글씨를 칠 때마다 즉시 로컬 스토리지에 저장
+                    input.addEventListener('input', function() {{
+                        localStorage.setItem(storageKey, this.value);
+                    }});
+                }});
+            }});
+        </script>
     </body>
     </html>
     """
