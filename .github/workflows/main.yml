@@ -1,0 +1,39 @@
+name: Update Flight Data
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # 30분마다 자동 실행 (UTC 기준)
+  workflow_dispatch: # 수동 실행 버튼 활성화
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Python script
+      env:
+        SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
+      run: python main.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add index.html
+        # 변경사항이 있을 때만 커밋
+        git commit -m "Update flight data" || exit 0
+        git push
