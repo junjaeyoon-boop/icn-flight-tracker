@@ -1,0 +1,12 @@
+{
+  "date": "20261011",
+  "departures": [],
+  "arrivals": [
+    {
+      "flight": "EY822",
+      "airport": "아부다비",
+      "scheduled": "10:55",
+      "estimated": "[14:27]"
+    }
+  ]
+}
