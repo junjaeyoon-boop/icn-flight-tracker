@@ -1,12 +1,5 @@
 {
-  "date": "20261012",
+  "date": "20261013",
   "departures": [],
-  "arrivals": [
-    {
-      "flight": "KE624",
-      "airport": "마닐라",
-      "scheduled": "04:35",
-      "estimated": "[10:16]"
-    }
-  ]
+  "arrivals": []
 }
