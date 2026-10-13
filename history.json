@@ -1,6 +1,13 @@
 {
   "date": "20261013",
-  "departures": [],
+  "departures": [
+    {
+      "flight": "SC8002",
+      "airport": "지난",
+      "scheduled": "11:45",
+      "estimated": "[14:46]"
+    }
+  ],
   "arrivals": [
     {
       "flight": "MH066",
