@@ -1,19 +1,12 @@
 {
-  "date": "20261013",
+  "date": "20261014",
   "departures": [
     {
-      "flight": "SC8002",
-      "airport": "지난",
-      "scheduled": "11:45",
-      "estimated": "[14:46]"
+      "flight": "SC8014",
+      "airport": "싼야",
+      "scheduled": "08:35",
+      "estimated": "[11:50]"
     }
   ],
-  "arrivals": [
-    {
-      "flight": "MH066",
-      "airport": "쿠알라룸푸르",
-      "scheduled": "07:10",
-      "estimated": "[10:21]"
-    }
-  ]
+  "arrivals": []
 }
