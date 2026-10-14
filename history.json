@@ -1,5 +1,12 @@
 {
   "date": "20261015",
   "departures": [],
-  "arrivals": []
+  "arrivals": [
+    {
+      "flight": "OZ201",
+      "airport": "로스앤젤레스",
+      "scheduled": "15:20",
+      "estimated": "[18:34]"
+    }
+  ]
 }
