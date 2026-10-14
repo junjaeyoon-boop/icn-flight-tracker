@@ -1,37 +1,5 @@
 {
-  "date": "20261014",
-  "departures": [
-    {
-      "flight": "SC8014",
-      "airport": "싼야",
-      "scheduled": "08:35",
-      "estimated": "[11:45]"
-    },
-    {
-      "flight": "OZ202",
-      "airport": "로스앤젤레스",
-      "scheduled": "12:40",
-      "estimated": "[16:04]"
-    },
-    {
-      "flight": "PR403",
-      "airport": "마닐라",
-      "scheduled": "20:30",
-      "estimated": "[23:35]"
-    }
-  ],
-  "arrivals": [
-    {
-      "flight": "AC063",
-      "airport": "밴쿠버",
-      "scheduled": "16:05",
-      "estimated": "[19:05]"
-    },
-    {
-      "flight": "PR402",
-      "airport": "마닐라",
-      "scheduled": "19:15",
-      "estimated": "[22:40]"
-    }
-  ]
+  "date": "20261015",
+  "departures": [],
+  "arrivals": []
 }
