@@ -5,8 +5,21 @@
       "flight": "SC8014",
       "airport": "싼야",
       "scheduled": "08:35",
-      "estimated": "[11:50]"
+      "estimated": "[11:45]"
+    },
+    {
+      "flight": "OZ202",
+      "airport": "로스앤젤레스",
+      "scheduled": "12:40",
+      "estimated": "[15:40]"
     }
   ],
-  "arrivals": []
+  "arrivals": [
+    {
+      "flight": "AC063",
+      "airport": "밴쿠버",
+      "scheduled": "16:05",
+      "estimated": "[19:05]"
+    }
+  ]
 }
