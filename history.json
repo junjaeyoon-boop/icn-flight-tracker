@@ -1,31 +1,5 @@
 {
-  "date": "20261015",
-  "departures": [
-    {
-      "flight": "LJ233",
-      "airport": "오사카/ 간사이",
-      "scheduled": "10:10",
-      "estimated": "[13:41]"
-    },
-    {
-      "flight": "YP735",
-      "airport": "도쿄/나리타",
-      "scheduled": "13:50",
-      "estimated": "[17:22]"
-    }
-  ],
-  "arrivals": [
-    {
-      "flight": "LJ234",
-      "airport": "오사카/ 간사이",
-      "scheduled": "15:00",
-      "estimated": "[18:27]"
-    },
-    {
-      "flight": "OZ201",
-      "airport": "로스앤젤레스",
-      "scheduled": "15:20",
-      "estimated": "[18:34]"
-    }
-  ]
+  "date": "20261016",
+  "departures": [],
+  "arrivals": []
 }
