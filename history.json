@@ -1,5 +1,12 @@
 {
   "date": "20261016",
   "departures": [],
-  "arrivals": []
+  "arrivals": [
+    {
+      "flight": "LJ092",
+      "airport": "푸꾸옥",
+      "scheduled": "05:35",
+      "estimated": "[08:41]"
+    }
+  ]
 }
