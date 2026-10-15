@@ -1,12 +1,19 @@
 {
   "date": "20261016",
-  "departures": [],
+  "departures": [
+    {
+      "flight": "UA286",
+      "airport": "뉴어크",
+      "scheduled": "17:15",
+      "estimated": "[21:04]"
+    }
+  ],
   "arrivals": [
     {
       "flight": "LJ092",
       "airport": "푸꾸옥",
       "scheduled": "05:35",
-      "estimated": "[08:41]"
+      "estimated": "[08:38]"
     }
   ]
 }
