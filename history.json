@@ -1,7 +1,20 @@
 {
   "date": "20261015",
-  "departures": [],
+  "departures": [
+    {
+      "flight": "LJ233",
+      "airport": "오사카/ 간사이",
+      "scheduled": "10:10",
+      "estimated": "[13:41]"
+    }
+  ],
   "arrivals": [
+    {
+      "flight": "LJ234",
+      "airport": "오사카/ 간사이",
+      "scheduled": "15:00",
+      "estimated": "[18:14]"
+    },
     {
       "flight": "OZ201",
       "airport": "로스앤젤레스",
