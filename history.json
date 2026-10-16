@@ -1,19 +1,19 @@
 {
-  "date": "20261016",
+  "date": "20261017",
   "departures": [
     {
-      "flight": "UA286",
-      "airport": "뉴어크",
-      "scheduled": "17:15",
-      "estimated": "[21:04]"
+      "flight": "OD821",
+      "airport": "쿠알라룸푸르",
+      "scheduled": "06:50",
+      "estimated": "[15:10]"
     }
   ],
   "arrivals": [
     {
-      "flight": "LJ092",
-      "airport": "푸꾸옥",
-      "scheduled": "05:35",
-      "estimated": "[08:41]"
+      "flight": "OD820",
+      "airport": "쿠알라룸푸르",
+      "scheduled": "05:50",
+      "estimated": "[14:20]"
     }
   ]
 }
