@@ -11,13 +11,19 @@
       "flight": "OD821",
       "airport": "쿠알라룸푸르",
       "scheduled": "06:50",
-      "estimated": "[15:10]"
+      "estimated": "[16:25]"
     },
     {
       "flight": "VN409",
       "airport": "호찌민",
       "scheduled": "10:35",
       "estimated": "[13:56]"
+    },
+    {
+      "flight": "7C3211",
+      "airport": "사이판",
+      "scheduled": "20:20",
+      "estimated": "[결항]"
     }
   ],
   "arrivals": [
@@ -38,6 +44,12 @@
       "airport": "호찌민",
       "scheduled": "06:40",
       "estimated": "[12:38]"
+    },
+    {
+      "flight": "JQ047",
+      "airport": "시드니",
+      "scheduled": "20:15",
+      "estimated": "[23:50]"
     }
   ]
 }
