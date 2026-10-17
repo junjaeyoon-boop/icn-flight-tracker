@@ -17,7 +17,7 @@
       "flight": "VN409",
       "airport": "호찌민",
       "scheduled": "10:35",
-      "estimated": "[13:50]"
+      "estimated": "[13:56]"
     }
   ],
   "arrivals": [
@@ -31,13 +31,13 @@
       "flight": "OD820",
       "airport": "쿠알라룸푸르",
       "scheduled": "05:50",
-      "estimated": "[14:33]"
+      "estimated": "[14:34]"
     },
     {
       "flight": "VN408",
       "airport": "호찌민",
       "scheduled": "06:40",
-      "estimated": "[12:28]"
+      "estimated": "[12:38]"
     }
   ]
 }
