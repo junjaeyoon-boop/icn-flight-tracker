@@ -5,7 +5,7 @@
       "flight": "DV468",
       "airport": "쉼켄트",
       "scheduled": "05:45",
-      "estimated": "[09:30]"
+      "estimated": "[09:28]"
     },
     {
       "flight": "OD821",
@@ -31,13 +31,13 @@
       "flight": "OD820",
       "airport": "쿠알라룸푸르",
       "scheduled": "05:50",
-      "estimated": "[14:20]"
+      "estimated": "[14:33]"
     },
     {
       "flight": "VN408",
       "airport": "호찌민",
       "scheduled": "06:40",
-      "estimated": "[12:15]"
+      "estimated": "[12:28]"
     }
   ]
 }
