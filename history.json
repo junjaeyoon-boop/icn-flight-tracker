@@ -1,55 +1,31 @@
 {
-  "date": "20261017",
+  "date": "20261018",
   "departures": [
     {
-      "flight": "DV468",
-      "airport": "쉼켄트",
-      "scheduled": "05:45",
-      "estimated": "[09:28]"
+      "flight": "ZH628",
+      "airport": "우시",
+      "scheduled": "14:30",
+      "estimated": "[19:05]"
     },
     {
-      "flight": "OD821",
-      "airport": "쿠알라룸푸르",
-      "scheduled": "06:50",
-      "estimated": "[16:25]"
-    },
-    {
-      "flight": "VN409",
-      "airport": "호찌민",
-      "scheduled": "10:35",
-      "estimated": "[13:56]"
-    },
-    {
-      "flight": "7C3211",
-      "airport": "사이판",
-      "scheduled": "20:20",
-      "estimated": "[결항]"
+      "flight": "ZH634",
+      "airport": "선전",
+      "scheduled": "15:15",
+      "estimated": "[19:00]"
     }
   ],
   "arrivals": [
     {
-      "flight": "DV467",
-      "airport": "쉼켄트",
-      "scheduled": "04:45",
-      "estimated": "[08:28]"
+      "flight": "ZH627",
+      "airport": "우시",
+      "scheduled": "13:25",
+      "estimated": "[18:15]"
     },
     {
-      "flight": "OD820",
-      "airport": "쿠알라룸푸르",
-      "scheduled": "05:50",
-      "estimated": "[14:34]"
-    },
-    {
-      "flight": "VN408",
-      "airport": "호찌민",
-      "scheduled": "06:40",
-      "estimated": "[12:38]"
-    },
-    {
-      "flight": "JQ047",
-      "airport": "시드니",
-      "scheduled": "20:15",
-      "estimated": "[23:55]"
+      "flight": "ZH633",
+      "airport": "선전",
+      "scheduled": "14:15",
+      "estimated": "[18:25]"
     }
   ]
 }
