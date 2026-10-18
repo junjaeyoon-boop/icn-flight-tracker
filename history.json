@@ -16,6 +16,12 @@
   ],
   "arrivals": [
     {
+      "flight": "TG656",
+      "airport": "방콕/수완나품",
+      "scheduled": "06:55",
+      "estimated": "[09:55]"
+    },
+    {
       "flight": "ZH627",
       "airport": "우시",
       "scheduled": "13:25",
@@ -25,7 +31,7 @@
       "flight": "ZH633",
       "airport": "선전",
       "scheduled": "14:15",
-      "estimated": "[18:25]"
+      "estimated": "[18:00]"
     }
   ]
 }
