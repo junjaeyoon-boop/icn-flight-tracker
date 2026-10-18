@@ -2,6 +2,12 @@
   "date": "20261018",
   "departures": [
     {
+      "flight": "HY516",
+      "airport": "타슈켄트",
+      "scheduled": "08:15",
+      "estimated": "[11:58]"
+    },
+    {
       "flight": "ZH628",
       "airport": "우시",
       "scheduled": "14:30",
@@ -22,10 +28,22 @@
       "estimated": "[09:55]"
     },
     {
+      "flight": "MU2033",
+      "airport": "칭다오",
+      "scheduled": "12:10",
+      "estimated": "[15:40]"
+    },
+    {
       "flight": "ZH627",
       "airport": "우시",
       "scheduled": "13:25",
       "estimated": "[18:15]"
+    },
+    {
+      "flight": "CZ6073",
+      "airport": "옌지(연길)",
+      "scheduled": "13:25",
+      "estimated": "[16:30]"
     },
     {
       "flight": "ZH633",
