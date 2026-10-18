@@ -95,31 +95,43 @@
       "flight": "ZH634",
       "airport": "선전",
       "scheduled": "15:15",
-      "estimated": "[20:00]"
+      "estimated": "[20:35]"
     },
     {
       "flight": "SC4614",
       "airport": "칭다오",
       "scheduled": "15:30",
-      "estimated": "[19:15]"
+      "estimated": "[19:09]"
+    },
+    {
+      "flight": "LJ265",
+      "airport": "후쿠오카",
+      "scheduled": "15:35",
+      "estimated": "[19:04]"
     },
     {
       "flight": "LJ239",
       "airport": "오사카/ 간사이",
       "scheduled": "16:10",
-      "estimated": "[19:30]"
+      "estimated": "[21:05]"
     },
     {
       "flight": "SC4616",
       "airport": "칭다오",
       "scheduled": "16:45",
-      "estimated": "[20:05]"
+      "estimated": "[19:56]"
     },
     {
       "flight": "LJ009",
       "airport": "치앙마이",
       "scheduled": "17:20",
-      "estimated": "[20:30]"
+      "estimated": "[21:16]"
+    },
+    {
+      "flight": "ZH632",
+      "airport": "선전",
+      "scheduled": "17:45",
+      "estimated": "[21:07]"
     }
   ],
   "arrivals": [
@@ -151,13 +163,13 @@
       "flight": "KE832",
       "airport": "선양(심양)",
       "scheduled": "13:15",
-      "estimated": "[20:15]"
+      "estimated": "[23:00]"
     },
     {
       "flight": "ZH627",
       "airport": "우시",
       "scheduled": "13:25",
-      "estimated": "[19:05]"
+      "estimated": "[19:06]"
     },
     {
       "flight": "CZ6073",
@@ -193,7 +205,7 @@
       "flight": "ZH633",
       "airport": "선전",
       "scheduled": "14:15",
-      "estimated": "[19:08]"
+      "estimated": "[19:24]"
     },
     {
       "flight": "SC4613",
@@ -217,13 +229,13 @@
       "flight": "OZ340",
       "airport": "하얼빈",
       "scheduled": "18:10",
-      "estimated": "[21:25]"
+      "estimated": "[21:33]"
     },
     {
       "flight": "JQ047",
       "airport": "시드니",
       "scheduled": "20:15",
-      "estimated": "[23:20]"
+      "estimated": "[23:27]"
     }
   ]
 }
