@@ -2,6 +2,12 @@
   "date": "20261019",
   "departures": [
     {
+      "flight": "LX123",
+      "airport": "취리히",
+      "scheduled": "09:30",
+      "estimated": "[16:30]"
+    },
+    {
       "flight": "LJ239",
       "airport": "오사카/ 간사이",
       "scheduled": "16:10",
@@ -13,13 +19,19 @@
       "flight": "LJ010",
       "airport": "치앙마이",
       "scheduled": "05:05",
-      "estimated": "[08:40]"
+      "estimated": "[08:39]"
     },
     {
       "flight": "LJ092",
       "airport": "푸꾸옥",
       "scheduled": "05:35",
-      "estimated": "[08:36]"
+      "estimated": "[08:45]"
+    },
+    {
+      "flight": "LX122",
+      "airport": "취리히",
+      "scheduled": "07:30",
+      "estimated": "[14:51]"
     }
   ]
 }
