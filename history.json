@@ -1,61 +1,12 @@
 {
-  "date": "20261019",
-  "departures": [
-    {
-      "flight": "LX123",
-      "airport": "취리히",
-      "scheduled": "09:30",
-      "estimated": "[16:48]"
-    },
-    {
-      "flight": "OZ202",
-      "airport": "로스앤젤레스",
-      "scheduled": "12:40",
-      "estimated": "[16:09]"
-    },
-    {
-      "flight": "LJ347",
-      "airport": "나고야",
-      "scheduled": "16:05",
-      "estimated": "[19:12]"
-    },
-    {
-      "flight": "LJ239",
-      "airport": "오사카/ 간사이",
-      "scheduled": "16:10",
-      "estimated": "[21:00]"
-    }
-  ],
+  "date": "20261020",
+  "departures": [],
   "arrivals": [
     {
-      "flight": "LJ010",
-      "airport": "치앙마이",
-      "scheduled": "05:05",
-      "estimated": "[08:36]"
-    },
-    {
-      "flight": "LJ092",
-      "airport": "푸꾸옥",
-      "scheduled": "05:35",
-      "estimated": "[08:46]"
-    },
-    {
-      "flight": "LX122",
-      "airport": "취리히",
-      "scheduled": "07:30",
-      "estimated": "[15:08]"
-    },
-    {
-      "flight": "CA123",
-      "airport": "베이징/서우두",
-      "scheduled": "11:35",
-      "estimated": "[14:40]"
-    },
-    {
-      "flight": "KE928",
-      "airport": "밀라노",
-      "scheduled": "16:35",
-      "estimated": "[19:46]"
+      "flight": "OZ201",
+      "airport": "로스앤젤레스",
+      "scheduled": "15:20",
+      "estimated": "[18:20]"
     }
   ]
 }
