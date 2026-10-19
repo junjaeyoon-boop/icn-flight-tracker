@@ -8,6 +8,12 @@
       "estimated": "[16:30]"
     },
     {
+      "flight": "LJ347",
+      "airport": "나고야",
+      "scheduled": "16:05",
+      "estimated": "[19:10]"
+    },
+    {
       "flight": "LJ239",
       "airport": "오사카/ 간사이",
       "scheduled": "16:10",
@@ -19,13 +25,13 @@
       "flight": "LJ010",
       "airport": "치앙마이",
       "scheduled": "05:05",
-      "estimated": "[08:39]"
+      "estimated": "[08:36]"
     },
     {
       "flight": "LJ092",
       "airport": "푸꾸옥",
       "scheduled": "05:35",
-      "estimated": "[08:45]"
+      "estimated": "[08:46]"
     },
     {
       "flight": "LX122",
