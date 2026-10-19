@@ -5,19 +5,19 @@
       "flight": "LX123",
       "airport": "취리히",
       "scheduled": "09:30",
-      "estimated": "[16:30]"
+      "estimated": "[16:48]"
     },
     {
       "flight": "OZ202",
       "airport": "로스앤젤레스",
       "scheduled": "12:40",
-      "estimated": "[15:40]"
+      "estimated": "[16:09]"
     },
     {
       "flight": "LJ347",
       "airport": "나고야",
       "scheduled": "16:05",
-      "estimated": "[19:10]"
+      "estimated": "[19:12]"
     },
     {
       "flight": "LJ239",
@@ -43,13 +43,19 @@
       "flight": "LX122",
       "airport": "취리히",
       "scheduled": "07:30",
-      "estimated": "[15:11]"
+      "estimated": "[15:08]"
     },
     {
       "flight": "CA123",
       "airport": "베이징/서우두",
       "scheduled": "11:35",
-      "estimated": "[14:39]"
+      "estimated": "[14:40]"
+    },
+    {
+      "flight": "KE928",
+      "airport": "밀라노",
+      "scheduled": "16:35",
+      "estimated": "[19:46]"
     }
   ]
 }
