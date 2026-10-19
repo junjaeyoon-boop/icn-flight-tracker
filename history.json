@@ -8,6 +8,12 @@
       "estimated": "[16:30]"
     },
     {
+      "flight": "OZ202",
+      "airport": "로스앤젤레스",
+      "scheduled": "12:40",
+      "estimated": "[15:40]"
+    },
+    {
       "flight": "LJ347",
       "airport": "나고야",
       "scheduled": "16:05",
@@ -37,7 +43,13 @@
       "flight": "LX122",
       "airport": "취리히",
       "scheduled": "07:30",
-      "estimated": "[14:51]"
+      "estimated": "[15:11]"
+    },
+    {
+      "flight": "CA123",
+      "airport": "베이징/서우두",
+      "scheduled": "11:35",
+      "estimated": "[14:39]"
     }
   ]
 }
