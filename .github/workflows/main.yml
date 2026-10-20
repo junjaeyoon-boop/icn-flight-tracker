@@ -1,38 +1,57 @@
 name: Update Flight Data
 
+# 10분마다 수집해서 GitHub Pages로 바로 배포합니다 (저장소에 커밋을 쌓지 않음).
+# 최초 1회: Settings > Pages > Build and deployment > Source 를 "GitHub Actions" 로 바꿔 주세요.
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt
 
-    - name: Run Python script
-      env:
-        SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
-      run: python main.py
+      # 직전 배포본의 data.json 을 받아 변경 이력을 이어갑니다 (없으면 새로 시작)
+      - name: Download previous data
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY##*/}"
+          curl -sfL "https://${OWNER}.github.io/${REPO}/data.json?t=$(date +%s)" -o prev_data.json || echo '{}' > prev_data.json
 
-    - name: Commit and push changes
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add index.html history.json
-        git commit -m "Update flight data" || exit 0
-        git push
+      - name: Collect flights
+        env:
+          SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
+        run: python main.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
