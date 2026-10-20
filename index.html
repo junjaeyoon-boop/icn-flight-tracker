@@ -1,66 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICN 비정상 운항 현황</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --bg:#f3f4f6; --panel:#fff; --ink:#111827; --sub:#4b5563; --muted:#6b7280; --line:#e5e7eb;
+  --head:#0f172a; --headInk:#f8fafc;
+  --cx:#dc2626; --cxBg:#fef2f2; --dv:#7c3aed; --dvBg:#f5f3ff; --dl:#d97706; --dlBg:#fffbeb;
+  --ok:#059669; --okBg:#ecfdf5; --info:#2563eb; --infoBg:#eff6ff;
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0b1220; --panel:#111a2e; --ink:#e5e7eb; --sub:#cbd5e1; --muted:#94a3b8; --line:#1f2a44;
+  --head:#020617; --cxBg:#2a1215; --dvBg:#1e1636; --dlBg:#2a1f0b; --okBg:#0b2a20; --infoBg:#0f1d3a;
+  --cx:#f87171; --dv:#a78bfa; --dl:#fbbf24; --ok:#34d399; --info:#60a5fa;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.45;word-break:keep-all}
+button,input,select,textarea{font:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
 
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>인천공항 비정상 운항 현황</title>
-        <style>
-            body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
-            h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
-            ul { list-style-type: none; padding: 0; }
-            li { padding: 12px 8px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
-            .flight-info { font-size: 16px; word-break: keep-all; }
-            .remark-input { width: 100%; max-width: 500px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background-color: #f9f9f9; }
-            .remark-input:focus { outline: none; border-color: #0066cc; background-color: #fff; }
-        </style>
-    </head>
-    <body>
-        <h1>📅 인천국제공항 당일 비정상 운항 누적 보고서</h1>
-        <p style="color:gray;">업데이트 시간: 2026년 10월 21일 05:48 기준</p>
-        
-        <h2>🛫 출발편 (당일 누적 1건)</h2>
-        <ul>
-    
-            <li>
-                <div class="flight-info">[AF267] [파리/샤를드골] [11:40] -> <strong>[23:00]</strong></div>
-                <input type="text" class="remark-input" data-flight="AF267" placeholder="여기에 비고를 입력하세요 (자동 임시저장)">
-            </li>
-        </ul>
-        <h2>🛬 도착편 (당일 누적 1건)</h2>
-        <ul>
-    
-            <li>
-                <div class="flight-info">[AF264] [파리/샤를드골] [09:35] -> <strong>[17:45]</strong></div>
-                <input type="text" class="remark-input" data-flight="AF264" placeholder="여기에 비고를 입력하세요 (자동 임시저장)">
-            </li>
-        </ul>
-        <p style="color:gray; font-size:12px; margin-top:30px;">※ 이 데이터는 30분 주기로 자동 업데이트되며, 이미 도착/출발이 끝난 항공편도 자정 전까지 리스트에 계속 남습니다.</p>
-        
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const todayKey = "20261021";
-                const inputs = document.querySelectorAll('.remark-input');
+header{background:var(--head);color:var(--headInk);padding:12px 16px;position:sticky;top:0;z-index:20}
+.hrow{max-width:1280px;margin:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:18px;letter-spacing:-.01em}
+.brand small{font-weight:500;opacity:.7;margin-left:6px;font-size:13px}
+.clock{font-size:22px;font-weight:700;margin-left:auto}
+.upd{display:flex;align-items:center;gap:6px;font-size:13px;opacity:.9}
+.dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.dot.warn{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.25)}
+.dot.bad{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.3)}
+.hbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;white-space:nowrap}
+.hbtn:hover{background:rgba(255,255,255,.2)}
+.hbtn.on{background:#f59e0b;border-color:#f59e0b;color:#111}
 
-                for (let i = 0; i < localStorage.length; i++) {
-                    let key = localStorage.key(i);
-                    if (key && key.startsWith('remark_') && !key.includes(todayKey)) {
-                        localStorage.removeItem(key);
-                    }
-                }
+main{max-width:1280px;margin:auto;padding:14px 16px 60px}
+.banner{border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;font-weight:600;display:none}
+.banner.show{display:block}
+.banner.bad{background:var(--cxBg);color:var(--cx);border:1px solid var(--cx)}
+.banner.warn{background:var(--dlBg);color:var(--dl);border:1px solid var(--dl)}
 
-                inputs.forEach(input => {
-                    const flightId = input.getAttribute('data-flight');
-                    const storageKey = `remark_${todayKey}_${flightId}`;
-                    if (localStorage.getItem(storageKey)) {
-                        input.value = localStorage.getItem(storageKey);
-                    }
-                    input.addEventListener('input', function() {
-                        localStorage.setItem(storageKey, this.value);
-                    });
-                });
-            });
-        </script>
-    </body>
-    </html>
-    
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;cursor:pointer;text-align:left;border-left:5px solid var(--c)}
+.tile[aria-pressed=true]{outline:2px solid var(--c);background:var(--cb)}
+.tile .lbl{font-size:13px;color:var(--sub);font-weight:600}
+.tile .val{font-size:30px;font-weight:800;color:var(--c);line-height:1.1}
+.tile .val small{font-size:13px;color:var(--muted);font-weight:600;margin-left:6px}
+
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.search{flex:1 1 260px;min-width:200px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:16px}
+.search:focus{outline:2px solid var(--info);border-color:transparent}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--sub)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel);font-weight:700}
+select.sel{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:14px}
+label.chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--sub);cursor:pointer}
+.resinfo{font-size:13px;color:var(--muted);margin:2px 2px 8px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.linkbtn{background:none;border:0;color:var(--info);cursor:pointer;padding:0;font-size:13px;font-weight:600}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--c,var(--line));border-radius:var(--radius);overflow:hidden}
+.card.cx{--c:var(--cx)} .card.dv{--c:var(--dv)} .card.dl{--c:var(--dl)}
+.card.done{opacity:.62}
+.card.done:hover,.card.open{opacity:1}
+.sum{display:grid;grid-template-columns:150px 1fr 180px 1fr;gap:4px 16px;padding:10px 14px;cursor:pointer;align-items:center}
+.sum:hover{background:color-mix(in srgb,var(--panel) 92%,var(--ink))}
+.fno{font-size:20px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.dir{font-size:12px;font-weight:700;border-radius:5px;padding:1px 6px;background:var(--infoBg);color:var(--info)}
+.dir.a{background:var(--okBg);color:var(--ok)}
+.cs{font-size:12px;color:var(--muted)}
+.route{font-weight:700;font-size:16px}
+.airline{font-size:13px;color:var(--sub)}
+.times{font-size:16px}
+.times s{color:var(--muted)}
+.times b{font-size:19px}
+.plus{font-size:12px;font-weight:700;color:var(--cx);margin-left:2px;vertical-align:super}
+.badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.bdg{font-size:13px;font-weight:700;border-radius:6px;padding:2px 8px;background:var(--line);color:var(--sub);white-space:nowrap}
+.bdg.cx{background:var(--cx);color:#fff}.bdg.dv{background:var(--dv);color:#fff}.bdg.dl{background:var(--dlBg);color:var(--dl);border:1px solid var(--dl)}
+.bdg.new{background:#ef4444;color:#fff;animation:pulse 1.6s infinite}
+.bdg.gone{background:transparent;border:1px dashed var(--muted)}
+@keyframes pulse{50%{opacity:.55}}
+.facts{grid-column:1/-1;display:flex;gap:6px 14px;flex-wrap:wrap;font-size:14px;color:var(--sub)}
+.facts span b{color:var(--ink)}
+.facts .chg{color:var(--info)}
+.memo{grid-column:1/-1;font-size:13px;border-radius:6px;padding:4px 8px;background:var(--okBg);color:var(--ok)}
+.memo.need{background:var(--dlBg);color:var(--dl)}
+
+.detail{display:none;border-top:1px solid var(--line);padding:12px 14px;gap:16px;grid-template-columns:1.3fr 1fr}
+.card.open .detail{display:grid}
+.detail h4{margin:0 0 8px;font-size:14px}
+.form{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;align-items:center}
+.form label{font-size:13px;color:var(--sub);font-weight:600}
+.form input,.form textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg)}
+.form textarea{resize:vertical;min-height:38px}
+.form input:focus,.form textarea:focus{outline:2px solid var(--info);border-color:transparent;background:var(--panel)}
+.form .meta{grid-column:2;font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:14px}
+.btn.pri{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.btn:hover{filter:brightness(.95)}
+.tl{list-style:none;margin:0;padding:0;font-size:13px}
+.tl li{padding:4px 0 4px 12px;border-left:2px solid var(--line);position:relative}
+.tl li::before{content:"";position:absolute;left:-5px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--info)}
+.tl .t{font-weight:700;margin-right:6px}
+.empty{padding:40px;text-align:center;color:var(--muted);background:var(--panel);border-radius:var(--radius);border:1px dashed var(--line)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--panel);padding:10px 16px;border-radius:8px;font-weight:600;transition:transform .2s;z-index:50}
+.toast.show{transform:translateX(-50%) translateY(0)}
+dialog{border:0;border-radius:12px;padding:0;max-width:640px;width:calc(100% - 32px);background:var(--panel);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg-h{padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;display:flex;justify-content:space-between}
+.dlg-b{padding:12px 16px}
+.dlg-b textarea{width:100%;min-height:340px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+@media (max-width:900px){
+  .sum{grid-template-columns:1fr auto;}
+  .sum .times{grid-column:1/-1;order:3}
+  .sum .route-c{grid-column:1/-1;order:4}
+  .sum .facts{order:5}.sum .memo{order:6}
+  .badges{justify-content:flex-end}
+  .detail{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .clock{font-size:18px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div class="brand">✈ 인천공항 비정상 운항<small>안내데스크</small></div>
+    <div class="upd"><span class="dot" id="dot"></span><span id="upd">불러오는 중…</span></div>
+    <div class="clock num" id="clock">--:--</div>
+    <button class="hbtn" id="btnReport" title="결항·회항·지연 목록을 메신저 전달용 텍스트로">📋 전달문</button>
+    <button class="hbtn" id="btnSound" title="새 비정상편이 생기면 소리로 알림">🔕 알림음</button>
+    <button class="hbtn" id="btnRefresh">↻ 새로고침</button>
+  </div>
+</header>
+
+<main>
+  <div class="banner bad" id="errBanner"></div>
+  <div class="banner warn" id="staleBanner"></div>
+
+  <div class="tiles">
+    <button class="tile" data-k="cx" style="--c:var(--cx);--cb:var(--cxBg)"><div class="lbl">결항</div><div class="val num" id="tCx">0</div></button>
+    <button class="tile" data-k="dv" style="--c:var(--dv);--cb:var(--dvBg)"><div class="lbl">회항</div><div class="val num" id="tDv">0</div></button>
+    <button class="tile" data-k="dl" style="--c:var(--dl);--cb:var(--dlBg)"><div class="lbl" id="tDlLbl">지연 1시간+</div><div class="val num" id="tDl">0</div></button>
+    <button class="tile" data-k="new" style="--c:#ef4444;--cb:var(--cxBg)"><div class="lbl">미확인 신규</div><div class="val num" id="tNew">0</div></button>
+  </div>
+
+  <div class="controls">
+    <input class="search" id="q" type="search" placeholder="편명·도시·항공사·카운터 검색  (단축키 /)" autocomplete="off">
+    <div class="seg" id="segScope">
+      <button data-v="abn" aria-pressed="true">비정상만</button>
+      <button data-v="all" aria-pressed="false">전체 항공편</button>
+    </div>
+    <div class="seg" id="segDir">
+      <button data-v="" aria-pressed="true">출·도착</button>
+      <button data-v="D" aria-pressed="false">출발</button>
+      <button data-v="A" aria-pressed="false">도착</button>
+    </div>
+    <select class="sel" id="selTerm" title="터미널">
+      <option value="">전 터미널</option><option value="T1">T1(탑승동 포함)</option><option value="T2">T2</option>
+    </select>
+    <select class="sel" id="selDelay" title="지연 기준">
+      <option value="30">지연 30분+</option><option value="60" selected>지연 1시간+</option>
+      <option value="120">지연 2시간+</option><option value="180">지연 3시간+</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="hideDone"> 출발·도착 완료편 숨기기</label>
+  </div>
+  <div class="resinfo"><span id="resCount"></span><button class="linkbtn" id="ackAll">신규 모두 확인 처리</button></div>
+  <div class="list" id="list"></div>
+</main>
+
+<dialog id="dlg">
+  <div class="dlg-h"><span>전달문</span><button class="linkbtn" onclick="dlg.close()">닫기 ✕</button></div>
+  <div class="dlg-b">
+    <textarea id="dlgText" readonly></textarea>
+    <div class="actions"><button class="btn pri" id="dlgCopy">복사하기</button></div>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} },
+};
+const REFRESH_MS = 60_000, STALE_MIN = 30;
+const NOTE_FIELDS = [
+  ["reason", "지연·결항 사유", "예: 기체 정비, 연결편 지연, 기상", "사유"],
+  ["counter", "체크인 카운터 운영", "예: 08:30~11:00 / 재오픈 20:00", "카운터"],
+  ["gateOps", "게이트 운영", "예: 탑승 22:20 시작, 게이트 변경 예정", "게이트"],
+  ["comp", "보상·지원", "예: 식사쿠폰 1만원, 호텔 제공, 재예약 안내", "보상"],
+  ["etc", "기타 안내", "예: 승객 문의 시 항공사 카운터로 안내", "기타"],
+];
+
+let data = null, openId = null, lastNewIds = null;
+const ui = store.get("ui", { scope:"abn", dir:"", term:"", delay:60, hideDone:false, tile:"", sound:false });
+
+// ---------- 분류 ----------
+const kind = f => {
+  const s = (f.status || "").toUpperCase();
+  if (/결항|취소|CANCEL|CNX/.test(s)) return "cx";
+  if (/회항|DIVERT/.test(s)) return "dv";
+  if (f.delay != null ? f.delay >= ui.delay : /지연|DELAY/.test(s)) return "dl";
+  return "";
+};
+const isDone = f => /^(출발|도착|착륙)$/.test(f.status || "");
+const fmtDelay = m => { if (m == null) return ""; const a = Math.abs(m), h = Math.floor(a/60), mm = a%60;
+  return (m < 0 ? "-" : "+") + (h ? `${h}시간` : "") + (h && mm ? " " : "") + (mm || !h ? `${mm}분` : ""); };
+const dayTag = d => d > 0 ? `<span class="plus">+${d}일</span>` : d < 0 ? `<span class="plus">${d}일</span>` : "";
+const place = f => f.airport + (f.airportCode ? ` (${f.airportCode})` : "");
+
+// ---------- 메모/확인 ----------
+const dkey = () => data?.date || "";
+const noteKey = id => `note_${dkey()}_${id}`;
+const getNote = id => store.get(noteKey(id), {});
+const ackKey = () => `ack_${dkey()}`;
+const acked = () => new Set(store.get(ackKey(), []));
+const airlineMemo = name => store.get(`airline_${name}`, "");
+function cleanupOld(){
+  try{
+    const keep = dkey();
+    for (let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if (/^(note|ack)_\d{8}/.test(k) && !k.includes(keep)) localStorage.removeItem(k);
+    }
+  }catch{}
+}
+
+// ---------- 데이터 ----------
+async function load(manual){
+  try{
+    const r = await fetch(`data.json?t=${Date.now()}`, { cache:"no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const next = await r.json();
+    const firstLoad = !data;
+    data = next;
+    cleanupOld();
+    checkNew(firstLoad);
+    render();
+    if (manual) toast("최신 데이터를 불러왔습니다");
+  }catch(e){
+    $("#errBanner").textContent = `data.json을 불러오지 못했습니다 (${e.message}). 네트워크를 확인하세요.`;
+    $("#errBanner").classList.add("show");
+  }
+}
+
+function abnormalNow(){ return data.flights.filter(f => kind(f)); }
+
+function checkNew(firstLoad){
+  const ack = acked();
+  const ids = new Set(abnormalNow().filter(f => !ack.has(f.id)).map(f => f.id));
+  if (!firstLoad && lastNewIds && ui.sound){
+    const added = [...ids].filter(id => !lastNewIds.has(id));
+    if (added.length) beep();
+  }
+  lastNewIds = ids;
+  document.title = (ids.size ? `(${ids.size}) ` : "") + "ICN 비정상 운항 현황";
+}
+
+// ---------- 렌더 ----------
+function render(){
+  if (!data) return;
+  const ack = acked();
+  const ab = abnormalNow();
+  const cnt = k => ab.filter(f => kind(f) === k).length;
+  $("#tCx").textContent = cnt("cx");
+  $("#tDv").textContent = cnt("dv");
+  $("#tDl").textContent = cnt("dl");
+  $("#tDlLbl").textContent = `지연 ${ui.delay >= 60 ? ui.delay/60 + "시간" : ui.delay + "분"}+`;
+  $("#tNew").textContent = ab.filter(f => !ack.has(f.id)).length;
+  document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed", t.dataset.k === ui.tile));
+
+  // 상태 표시
+  const upd = new Date(data.updatedAt), ok = data.lastSuccessAt ? new Date(data.lastSuccessAt) : null;
+  const ago = ok ? Math.round((Date.now() - ok) / 60000) : null;
+  $("#upd").textContent = ok ? `${hm(ok)} 수집 (${ago}분 전)` : "수집 기록 없음";
+  const dot = $("#dot"); dot.className = "dot" + (data.errors?.length ? " bad" : ago > STALE_MIN ? " warn" : "");
+  const eb = $("#errBanner");
+  eb.textContent = data.errors?.length ? `⚠ 공항 API 수집 오류 — 직전 데이터를 표시 중입니다. ${data.errors.join(" / ")}` : "";
+  eb.classList.toggle("show", !!data.errors?.length);
+  const sb = $("#staleBanner");
+  sb.textContent = ago > STALE_MIN ? `⏱ 마지막 수집이 ${ago}분 전입니다. 급한 건은 IIS·항공사로 재확인하세요.` : "";
+  sb.classList.toggle("show", ago > STALE_MIN);
+
+  // 필터
+  const q = $("#q").value.trim().toLowerCase().replace(/\s+/g, "");
+  let rows = data.flights.filter(f => {
+    const k = kind(f);
+    if (q){
+      const hay = [f.flight, ...(f.codeshares||[]), f.airline, f.airport, f.airportCode, f.chkin, f.gate, f.status, ...(f.via||[])].join(" ").toLowerCase().replace(/\s+/g,"");
+      if (!hay.includes(q)) return false;
+    } else if (ui.scope === "abn" && !k) return false;
+    if (ui.tile === "new" ? (!k || ack.has(f.id)) : ui.tile && k !== ui.tile) return false;
+    if (ui.dir && f.dir !== ui.dir) return false;
+    if (ui.term && !(f.terminal || "").startsWith(ui.term)) return false;
+    if (ui.hideDone && isDone(f)) return false;
+    return true;
+  });
+  // 비정상 우선: 결항 > 회항 > 지연, 그 안에서 예정시각순
+  const rank = { cx:0, dv:1, dl:2, "":3 };
+  if (ui.scope === "abn" || q) rows.sort((a, b) => (rank[kind(a)] - rank[kind(b)]) || ((a.schedMin ?? 9e9) - (b.schedMin ?? 9e9)));
+
+  $("#resCount").textContent = `${q ? `"${$("#q").value.trim()}" 검색 결과 ` : ""}${rows.length}편 · 오늘 전체 ${data.flights.length}편`;
+  $("#list").innerHTML = rows.length ? rows.map(f => card(f, ack)).join("")
+    : `<div class="empty">${q ? "검색 결과가 없습니다. 편명 앞 항공사 코드까지 입력해 보세요." : "조건에 맞는 비정상 운항편이 없습니다."}</div>`;
+}
+
+const hm = d => d.toLocaleTimeString("ko-KR", { hour:"2-digit", minute:"2-digit", hour12:false, timeZone:"Asia/Seoul" });
+
+function card(f, ack){
+  const k = kind(f), n = getNote(f.id), isNew = k && !ack.has(f.id);
+  const kindLbl = { cx:"결항", dv:"회항", dl:"지연" }[k];
+  const statusBdg = f.status && f.status !== kindLbl ? `<span class="bdg">${esc(f.status)}</span>` : "";
+  const delayBdg = f.delay != null && f.delay !== 0 && k !== "cx" ? `<span class="bdg ${f.delay >= ui.delay ? "dl" : ""}">${fmtDelay(f.delay)}</span>` : "";
+  const times = k === "cx"
+    ? `<span class="num"><s>${f.sched}</s> → <b style="color:var(--cx)">결항</b></span>`
+    : f.est && f.est !== f.sched
+      ? `<span class="num"><s>${f.sched}</s> → <b>${f.est}</b>${dayTag(f.estDay)}</span>`
+      : `<span class="num"><b>${f.sched}</b></span>`;
+  const chg = (f.changes || []).slice(-1)[0];
+  const facts = [
+    f.terminal && `<span>터미널 <b>${esc(f.terminal)}</b></span>`,
+    f.dir === "D" && f.chkin && `<span>체크인 <b>${esc(f.chkin)}</b></span>`,
+    f.gate && `<span>게이트 <b>${esc(f.gate)}</b></span>`,
+    f.dir === "A" && f.carousel && `<span>수하물 <b>${esc(f.carousel)}</b></span>`,
+    f.dir === "A" && f.exit && `<span>출구 <b>${esc(f.exit)}</b></span>`,
+    f.via?.length && `<span>경유 <b>${esc(f.via.join("·"))}</b></span>`,
+    f.firstSeen && `<span>최초 감지 <b>${esc(f.firstSeen)}</b></span>`,
+    chg && `<span class="chg">${esc(chg.t)} ${esc(chg.k)} 변경: ${esc(chg.from || "-")} → ${esc(chg.to || "-")}</span>`,
+  ].filter(Boolean).join("");
+  const filled = NOTE_FIELDS.filter(([key]) => n[key]);
+  const memo = !k ? "" : filled.length
+    ? `<div class="memo">✔ ${filled.map(([key, , , short]) => `${short}: ${esc(n[key])}`).join(" · ")}${n.at ? ` <span style="opacity:.7">(${esc(n.at)} 확인)</span>` : ""}</div>`
+    : `<div class="memo need">항공사 확인 필요 — 사유 · 카운터 · 게이트 · 보상</div>`;
+
+  return `<article class="card ${k} ${isDone(f) ? "done" : ""} ${openId === f.id ? "open" : ""}" data-id="${esc(f.id)}">
+    <div class="sum" data-toggle>
+      <div>
+        <div class="fno"><span class="dir ${f.dir === "A" ? "a" : ""}">${f.dir === "D" ? "출발" : "도착"}</span>${esc(f.flight)}</div>
+        ${f.codeshares?.length ? `<div class="cs">공동운항 ${esc(f.codeshares.join(", "))}</div>` : ""}
+      </div>
+      <div class="route-c">
+        <div class="route">${f.dir === "D" ? "→ " : "← "}${esc(place(f))}</div>
+        <div class="airline">${esc(f.airline)}</div>
+      </div>
+      <div class="times">${times}</div>
+      <div class="badges">${isNew ? `<span class="bdg new">NEW</span>` : ""}${kindLbl ? `<span class="bdg ${k}">${kindLbl}</span>` : ""}${delayBdg}${statusBdg}${f.gone ? `<span class="bdg gone">목록에서 빠짐</span>` : ""}</div>
+      ${facts ? `<div class="facts">${facts}</div>` : ""}
+      ${memo}
+    </div>
+    ${openId === f.id ? detail(f, n) : `<div class="detail"></div>`}
+  </article>`;
+}
+
+function detail(f, n){
+  const tl = (f.changes || []).slice().reverse().map(c =>
+    `<li><span class="t num">${esc(c.t)}</span>${esc(c.k)}: ${esc(c.from || "-")} → <b>${esc(c.to || "-")}</b></li>`).join("");
+  return `<div class="detail">
+    <div>
+      <h4>항공사 확인 내용 <span style="font-weight:400;color:var(--muted);font-size:12px">(입력 즉시 이 PC에 저장)</span></h4>
+      <div class="form">
+        ${NOTE_FIELDS.map(([key, lbl, ph]) => `<label for="n_${key}">${lbl}</label><input id="n_${key}" data-note="${key}" value="${esc(n[key] || "")}" placeholder="${ph}">`).join("")}
+        <label for="n_who">확인자</label><input id="n_who" data-note="who" value="${esc(n.who || "")}" placeholder="이름 / 통화한 항공사 담당">
+        <div class="meta">${n.at ? `마지막 수정 ${esc(n.at)}` : ""}</div>
+        <label for="n_airline">${esc(f.airline || "항공사")} 메모</label>
+        <textarea id="n_airline" data-airline="${esc(f.airline)}" placeholder="연락처·담당자 등 (이 항공사 모든 편에 공통 표시)">${esc(airlineMemo(f.airline))}</textarea>
+      </div>
+      <div class="actions">
+        <button class="btn pri" data-act="copy">승객 안내문 복사</button>
+        <button class="btn" data-act="ack">확인 처리</button>
+        <button class="btn" data-act="clear">메모 지우기</button>
+      </div>
+    </div>
+    <div>
+      <h4>변경 이력 (오늘)</h4>
+      ${tl ? `<ul class="tl">${tl}</ul>` : `<div style="color:var(--muted);font-size:13px">수집 이후 변경 없음</div>`}
+      <h4 style="margin-top:14px">원자료</h4>
+      <div style="font-size:13px;color:var(--sub)">예정 ${esc(f.sched)} · 변경 ${esc(f.est || "-")}${f.estDay ? ` (+${f.estDay}일)` : ""} · 현황 ${esc(f.status || "-")}</div>
+    </div>
+  </div>`;
+}
+
+// ---------- 문구 ----------
+function flightLine(f, withNote = true){
+  const k = kind(f), n = getNote(f.id);
+  const t = k === "cx" ? `${f.sched} 결항` : f.est && f.est !== f.sched ? `${f.sched}→${f.est}${f.estDay ? `(+${f.estDay}일)` : ""} ${fmtDelay(f.delay)}` : `${f.sched} ${f.status || ""}`;
+  const loc = [f.terminal, f.dir === "D" && f.chkin && `카운터 ${f.chkin}`, f.gate && `게이트 ${f.gate}`].filter(Boolean).join(" / ");
+  let s = `- ${f.flight}${f.codeshares?.length ? `(${f.codeshares.join(",")})` : ""} ${f.dir === "D" ? "출발" : "도착"} ${place(f)} | ${t}${loc ? ` | ${loc}` : ""}`;
+  if (withNote){
+    const parts = NOTE_FIELDS.filter(([key]) => n[key]).map(([key, lbl]) => `${lbl}: ${n[key]}`);
+    s += parts.length ? `\n    ${parts.join(" / ")}` : `\n    (항공사 확인 전)`;
+  }
+  return s;
+}
+function report(){
+  const ab = abnormalNow().sort((a,b) => (a.schedMin ?? 0) - (b.schedMin ?? 0));
+  const now = new Date();
+  const head = `[인천공항 비정상 운항] ${now.toLocaleDateString("ko-KR",{month:"numeric",day:"numeric",timeZone:"Asia/Seoul"})} ${hm(now)} 기준 (수집 ${data.lastSuccessAt ? hm(new Date(data.lastSuccessAt)) : "-"})`;
+  const sec = (k, title) => { const r = ab.filter(f => kind(f) === k); return r.length ? `\n■ ${title} ${r.length}건\n${r.map(f => flightLine(f)).join("\n")}` : ""; };
+  return head + (sec("cx","결항") + sec("dv","회항") + sec("dl",`지연(${fmtDelay(ui.delay).slice(1)} 이상)`) || "\n비정상 운항편 없음");
+}
+function paxText(f){
+  const k = kind(f), n = getNote(f.id);
+  const lines = [`${f.airline} ${f.flight}편 (${f.dir === "D" ? "인천 → " : ""}${f.airport}${f.dir === "A" ? " → 인천" : ""})`];
+  if (k === "cx") lines.push(`예정 ${f.sched} 항공편은 결항되었습니다.`);
+  else if (f.est && f.est !== f.sched) lines.push(`예정 ${f.sched} → 변경 ${f.est}${f.estDay ? ` (다음날)` : ""}${f.delay > 0 ? `, 약 ${fmtDelay(f.delay).slice(1)} 지연` : ""}`);
+  else lines.push(`${f.dir === "D" ? "출발" : "도착"} 예정 ${f.sched}${f.status ? ` (${f.status})` : ""}`);
+  if (n.reason) lines.push(`사유: ${n.reason}`);
+  if (f.dir === "D" && (f.chkin || n.counter)) lines.push(`체크인: ${[f.terminal, f.chkin].filter(Boolean).join(" ")}${n.counter ? ` (${n.counter})` : ""}`);
+  if (f.gate || n.gateOps) lines.push(`게이트: ${f.gate || "미정"}${n.gateOps ? ` (${n.gateOps})` : ""}`);
+  if (n.comp) lines.push(`지원: ${n.comp}`);
+  if (n.etc) lines.push(n.etc);
+  return lines.join("\n");
+}
+
+// ---------- 유틸 ----------
+async function copy(text, msg){
+  try{ await navigator.clipboard.writeText(text); toast(msg || "복사했습니다"); }
+  catch{ const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); toast(msg || "복사했습니다"); }
+}
+let toastT; function toast(m){ const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 1800); }
+let actx; function beep(){
+  try{ actx = actx || new AudioContext(); [0, .25].forEach(d => { const o = actx.createOscillator(), g = actx.createGain();
+    o.frequency.value = 880; g.gain.value = .15; o.connect(g); g.connect(actx.destination); o.start(actx.currentTime + d); o.stop(actx.currentTime + d + .15); }); }catch{}
+}
+const saveUi = () => store.set("ui", ui);
+function setSeg(id, val){ document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", b.dataset.v === val)); }
+
+// ---------- 이벤트 ----------
+$("#list").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if (!c) return;
+  const id = c.dataset.id, f = data.flights.find(x => x.id === id);
+  const act = e.target.closest("[data-act]")?.dataset.act;
+  if (act === "copy") return copy(paxText(f), "승객 안내문을 복사했습니다");
+  if (act === "ack"){ const a = acked(); a.add(id); store.set(ackKey(), [...a]); checkNew(); render(); return; }
+  if (act === "clear"){ if (confirm("이 편의 확인 메모를 지울까요?")){ localStorage.removeItem(noteKey(id)); render(); } return; }
+  if (e.target.closest("[data-toggle]") && !e.target.closest("input,textarea")){
+    openId = openId === id ? null : id;
+    if (openId){ const a = acked(); if (kind(f) && !a.has(id)){ a.add(id); store.set(ackKey(), [...a]); checkNew(); } }
+    render();
+  }
+});
+$("#list").addEventListener("input", e => {
+  const el = e.target, c = el.closest(".card"); if (!c) return;
+  if (el.dataset.note){
+    const n = getNote(c.dataset.id); n[el.dataset.note] = el.value.trim();
+    n.at = hm(new Date()); store.set(noteKey(c.dataset.id), n);
+  } else if (el.dataset.airline != null){ store.set(`airline_${el.dataset.airline}`, el.value); }
+});
+// 입력 중엔 다시 그리지 않고, 포커스가 빠질 때 요약줄 갱신
+$("#list").addEventListener("focusout", e => { if (e.target.matches("input,textarea") && !e.relatedTarget?.closest?.(`.card[data-id="${CSS.escape(openId || "")}"]`)) render(); });
+
+document.querySelectorAll(".tile").forEach(t => t.onclick = () => { ui.tile = ui.tile === t.dataset.k ? "" : t.dataset.k; if (ui.tile) { ui.scope = "abn"; setSeg("segScope","abn"); } saveUi(); render(); });
+$("#segScope").onclick = e => { const b = e.target.closest("button"); if (!b) return; ui.scope = b.dataset.v; setSeg("segScope", ui.scope); saveUi(); render(); };
+$("#segDir").onclick = e => { const b = e.target.closest("button"); if (!b) return; ui.dir = b.dataset.v; setSeg("segDir", ui.dir); saveUi(); render(); };
+$("#selTerm").onchange = e => { ui.term = e.target.value; saveUi(); render(); };
+$("#selDelay").onchange = e => { ui.delay = +e.target.value; saveUi(); checkNew(); render(); };
+$("#hideDone").onchange = e => { ui.hideDone = e.target.checked; saveUi(); render(); };
+$("#q").addEventListener("input", render);
+$("#q").addEventListener("keydown", e => { if (e.key === "Escape"){ e.target.value = ""; render(); } });
+document.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA"){ e.preventDefault(); $("#q").focus(); } });
+$("#ackAll").onclick = () => { const a = acked(); abnormalNow().forEach(f => a.add(f.id)); store.set(ackKey(), [...a]); checkNew(); render(); };
+$("#btnRefresh").onclick = () => load(true);
+$("#btnReport").onclick = () => { $("#dlgText").value = report(); $("#dlg").showModal(); };
+$("#dlgCopy").onclick = () => copy($("#dlgText").value, "전달문을 복사했습니다");
+const soundBtn = () => { $("#btnSound").textContent = ui.sound ? "🔔 알림음 켜짐" : "🔕 알림음"; $("#btnSound").classList.toggle("on", ui.sound); };
+$("#btnSound").onclick = () => { ui.sound = !ui.sound; saveUi(); soundBtn(); if (ui.sound) beep(); };
+
+// 초기 상태 복원
+setSeg("segScope", ui.scope); setSeg("segDir", ui.dir);
+$("#selTerm").value = ui.term; $("#selDelay").value = String(ui.delay); $("#hideDone").checked = ui.hideDone; soundBtn();
+setInterval(() => { $("#clock").textContent = hm(new Date()); }, 1000); $("#clock").textContent = hm(new Date());
+load();
+// 입력 중이 아닐 때만 자동 갱신
+setInterval(() => { if (!document.activeElement.matches("input:not(#q),textarea")) load(); }, REFRESH_MS);
+})();
+</script>
+</body>
+</html>
