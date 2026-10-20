@@ -1,12 +1,19 @@
 {
-  "date": "20261020",
-  "departures": [],
+  "date": "20261021",
+  "departures": [
+    {
+      "flight": "AF267",
+      "airport": "파리/샤를드골",
+      "scheduled": "11:40",
+      "estimated": "[23:00]"
+    }
+  ],
   "arrivals": [
     {
-      "flight": "OZ201",
-      "airport": "로스앤젤레스",
-      "scheduled": "15:20",
-      "estimated": "[19:13]"
+      "flight": "AF264",
+      "airport": "파리/샤를드골",
+      "scheduled": "09:35",
+      "estimated": "[17:45]"
     }
   ]
 }
